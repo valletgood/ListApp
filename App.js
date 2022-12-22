@@ -13,13 +13,11 @@ export default function App() {
   const [working, setWorking] = useState(true);
   const [text, setText] = useState('')
   const [toDos, setToDos] = useState({})
-  const [done, setDone] = useState()
   const ID = useRef(0)
 
   useEffect(() => {
     getState();
     loadToDos();
-    setDone(false)
   }, [])
 
   // Travel을 터치하면 working을 false로 설정 후 travel 화면으로
@@ -71,15 +69,6 @@ export default function App() {
     setToDos(JSON.parse(s))
   }
 
-  // 완료를 체크하는 함수
-  const doneToDo = async (key) => {
-    const target = toDos[key]
-    const newToDos = { ...toDos }
-    setDone((prev => !prev))
-    target.done = done
-    saveToDos(newToDos)
-  }
-
   // 마지막 터치를 저장하는 함수
   const saveState = async (state) => {
     await AsyncStorage.setItem(STATE_KEY, JSON.stringify(state))
@@ -114,7 +103,7 @@ export default function App() {
       />
       <StatusBar style="light" />
       <ScrollView>
-        <List toDos={toDos} state={state} working={working} saveToDos={saveToDos} setToDos={setToDos} done={done} setDone={setDone} doneToDo={doneToDo} text={text} setText={setText} />
+        <List toDos={toDos} state={state} working={working} saveToDos={saveToDos} setToDos={setToDos} text={text} setText={setText} />
       </ScrollView>
     </View>
   );

@@ -3,15 +3,17 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert, TextInput } from 'reac
 import { theme } from './colors';
 import { Feather } from '@expo/vector-icons';
 import Edit from './Edit';
+import { Fontisto } from '@expo/vector-icons';
 
-const List = ({ toDos, state, saveToDos, working, setToDos, doneToDo }) => {
+const List = ({ toDos, state, saveToDos, working, setToDos }) => {
+
+    const [done, setDone] = useState()
 
     const [newText, setNewText] = useState()
 
-    const [isEdit, setIsEdit] = useState(false)
+    const [isEdit, setIsEdit] = useState()
 
     const [editItem, setEditItem] = useState();
-
     const deleteToDo = async (key) => {
         Alert.alert("Delete To Do",
             "Are you Sure?",
@@ -35,12 +37,21 @@ const List = ({ toDos, state, saveToDos, working, setToDos, doneToDo }) => {
         setNewText(toDos[key].text)
         setEditItem(key)
     }
-    console.log()
+
+    const doneToDo = async (key) => {
+        const target = toDos[key]
+        const newToDos = { ...toDos }
+        setDone((prev => !prev))
+        target.done = !target.done
+        saveToDos(newToDos)
+    }
+    console.log(toDos)
+
+
     return (
         state ? (
             Object.keys(toDos).map(key =>
                 toDos[key].working === working && (
-                    // <Item toDo={toDos[key]} isEdit={isEdit} setIsEdit={setIsEdit} setNewText={setNewText} saveToDos={saveToDos} />
                     isEdit && key === editItem ? (
                         <View style={styles.editItem} key={key}>
                             <Edit id={key} toDo={toDos[key]} saveToDos={saveToDos} setIsEdit={setIsEdit} toDos={toDos} />
@@ -49,15 +60,19 @@ const List = ({ toDos, state, saveToDos, working, setToDos, doneToDo }) => {
                         :
                         (
                             <View style={styles.toDo} key={key}>
-                                <Text style={{ ...styles.toDoText, textDecorationLine: toDos[key].done ? 'line-through' : 'none' }}>
+                                <TouchableOpacity style={styles.toDoBtn} onPress={() => doneToDo(key)}>
+                                    <Text>
+                                        {toDos[key].done === false ?
+                                            <Fontisto name="checkbox-passive" size={24} color={theme.grey} />
+                                            :
+                                            <Fontisto name="checkbox-active" size={24} color={theme.grey} />
+                                        }
+                                    </Text>
+                                </TouchableOpacity>
+                                <Text style={{ ...styles.toDoText, textDecorationLine: toDos[key].done === true ? 'line-through' : 'none' }}>
                                     {toDos[key].text}
                                 </Text>
                                 <View style={styles.toDoBtns}>
-                                    <TouchableOpacity style={styles.toDoBtn} onPress={() => doneToDo(key)}>
-                                        <Text>
-                                            <Feather name="check" size={24} color={theme.grey} />
-                                        </Text>
-                                    </TouchableOpacity>
                                     <TouchableOpacity style={styles.toDoBtn} onPress={() => toggleEdit(key)}>
                                         <Text>
                                             <Feather name="edit" size={24} color={theme.grey} />
@@ -76,27 +91,39 @@ const List = ({ toDos, state, saveToDos, working, setToDos, doneToDo }) => {
             :
             Object.keys(toDos).map(key =>
                 toDos[key].working === false && (
-                    // <Item toDos={toDos[key]} />
-                    <View style={styles.toDo} key={key}>
-                        <Text style={{ ...styles.toDoText, textDecorationLine: toDos[key].done ? 'line-through' : 'none' }}>{toDos[key].text}</Text>
-                        <View style={styles.toDoBtns}>
-                            <TouchableOpacity style={styles.toDoBtn} onPress={() => doneToDo(key)}>
-                                <Text>
-                                    <Feather name="check" size={24} color={theme.grey} />
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.toDoBtn} onPress={() => toggleEdit(key)}>
-                                <Text>
-                                    <Feather name="edit" size={24} color={theme.grey} />
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.toDoBtn} onPress={() => deleteToDo(key)}>
-                                <Text>
-                                    <Feather name="trash" size={24} color={theme.grey} />
-                                </Text>
-                            </TouchableOpacity>
+                    isEdit && key === editItem ? (
+                        <View style={styles.editItem} key={key}>
+                            <Edit id={key} toDo={toDos[key]} saveToDos={saveToDos} setIsEdit={setIsEdit} toDos={toDos} />
                         </View>
-                    </View>
+                    )
+                        :
+                        (
+                            <View style={styles.toDo} key={key}>
+                                <TouchableOpacity style={styles.toDoBtn} onPress={() => doneToDo(key)}>
+                                    <Text>
+                                        {toDos[key].done === false ?
+                                            <Fontisto name="checkbox-passive" size={24} color={theme.grey} />
+                                            :
+                                            <Fontisto name="checkbox-active" size={24} color={theme.grey} />
+                                        }
+                                    </Text>
+                                </TouchableOpacity>
+                                <Text style={{ ...styles.toDoText, textDecorationLine: toDos[key].done ? 'line-through' : 'none' }}>{toDos[key].text}</Text>
+                                <View style={styles.toDoBtns}>
+
+                                    <TouchableOpacity style={styles.toDoBtn} onPress={() => toggleEdit(key)}>
+                                        <Text>
+                                            <Feather name="edit" size={24} color={theme.grey} />
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.toDoBtn} onPress={() => deleteToDo(key)}>
+                                        <Text>
+                                            <Feather name="trash" size={24} color={theme.grey} />
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        )
                 )
             )
     )
