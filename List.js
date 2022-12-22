@@ -45,8 +45,6 @@ const List = ({ toDos, state, saveToDos, working, setToDos }) => {
         target.done = !target.done
         saveToDos(newToDos)
     }
-    console.log(toDos)
-
 
     return (
         state ? (
