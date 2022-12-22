@@ -3,7 +3,7 @@ import { View, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-nativ
 import { Feather } from '@expo/vector-icons';
 import { theme } from './colors';
 
-const Edit = ({ toDo, toDos, saveToDos, setIsEdit }) => {
+const Edit = ({ id, toDo, toDos, saveToDos, setIsEdit }) => {
 
     const [newText, setNewText] = useState()
 
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     input: {
+        width: '80%',
         backgroundColor: 'white',
         paddingVertical: 15,
         paddingHorizontal: 20,

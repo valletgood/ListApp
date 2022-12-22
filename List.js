@@ -1,24 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, TextInput } from 'react-native';
 import { theme } from './colors';
 import { Feather } from '@expo/vector-icons';
 import Edit from './Edit';
 
-const List = ({ toDos, state, saveToDos, working, setToDos, doneToDo, text, setText }) => {
+const List = ({ toDos, state, saveToDos, working, setToDos, doneToDo }) => {
 
     const [newText, setNewText] = useState()
 
     const [isEdit, setIsEdit] = useState(false)
 
-    const editList = async () => {
-        const newToDos = { ...toDos }
-        saveToDos(newToDos)
-        setIsEdit(false)
-    }
-
-    const onChangeText = (e) => {
-        setNewText(e)
-    }
+    const [editItem, setEditItem] = useState();
 
     const deleteToDo = async (key) => {
         Alert.alert("Delete To Do",
@@ -41,47 +33,50 @@ const List = ({ toDos, state, saveToDos, working, setToDos, doneToDo, text, setT
     const toggleEdit = (key) => {
         setIsEdit((prev => !prev))
         setNewText(toDos[key].text)
-        console.log(toDos.id)
+        setEditItem(key)
     }
-
+    console.log()
     return (
         state ? (
             Object.keys(toDos).map(key =>
-                toDos[key].working === working &&
-                <View style={styles.toDo} key={key}>
-                    {isEdit ?
-                        <Edit toDo={toDos[key]} saveToDos={saveToDos} setIsEdit={setIsEdit} toDos={toDos} />
+                toDos[key].working === working && (
+                    // <Item toDo={toDos[key]} isEdit={isEdit} setIsEdit={setIsEdit} setNewText={setNewText} saveToDos={saveToDos} />
+                    isEdit && key === editItem ? (
+                        <View style={styles.editItem} key={key}>
+                            <Edit id={key} toDo={toDos[key]} saveToDos={saveToDos} setIsEdit={setIsEdit} toDos={toDos} />
+                        </View>
+                    )
                         :
-                        <>
-                            <Text style={{ ...styles.toDoText, textDecorationLine: toDos[key].done ? 'line-through' : 'none' }}>
-                                {toDos[key].text}
-                            </Text>
-                            <View style={styles.toDoBtns}>
-                                <TouchableOpacity style={styles.toDoBtn} onPress={() => doneToDo(key)}>
-                                    <Text>
-                                        <Feather name="check" size={24} color={theme.grey} />
-                                    </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.toDoBtn} onPress={() => toggleEdit(key)}>
-                                    <Text>
-                                        <Feather name="edit" size={24} color={theme.grey} />
-                                    </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.toDoBtn} onPress={() => deleteToDo(key)}>
-                                    <Text>
-                                        <Feather name="trash" size={24} color={theme.grey} />
-                                    </Text>
-                                </TouchableOpacity>
+                        (
+                            <View style={styles.toDo} key={key}>
+                                <Text style={{ ...styles.toDoText, textDecorationLine: toDos[key].done ? 'line-through' : 'none' }}>
+                                    {toDos[key].text}
+                                </Text>
+                                <View style={styles.toDoBtns}>
+                                    <TouchableOpacity style={styles.toDoBtn} onPress={() => doneToDo(key)}>
+                                        <Text>
+                                            <Feather name="check" size={24} color={theme.grey} />
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.toDoBtn} onPress={() => toggleEdit(key)}>
+                                        <Text>
+                                            <Feather name="edit" size={24} color={theme.grey} />
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.toDoBtn} onPress={() => deleteToDo(key)}>
+                                        <Text>
+                                            <Feather name="trash" size={24} color={theme.grey} />
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        </>
-                    }
-                </View>
-            )
-
-        )
+                        )
+                )
+            ))
             :
             Object.keys(toDos).map(key =>
                 toDos[key].working === false && (
+                    // <Item toDos={toDos[key]} />
                     <View style={styles.toDo} key={key}>
                         <Text style={{ ...styles.toDoText, textDecorationLine: toDos[key].done ? 'line-through' : 'none' }}>{toDos[key].text}</Text>
                         <View style={styles.toDoBtns}>
@@ -137,6 +132,13 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         fontSize: 15,
     },
+    editItem: {
+        backgroundColor: theme.toDoBg,
+        marginBottom: 10,
+        borderRadius: 15,
+        paddingHorizontal: 20,
+
+    }
 })
 
 

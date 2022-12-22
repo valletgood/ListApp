@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
 import { theme } from './colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,6 +14,7 @@ export default function App() {
   const [text, setText] = useState('')
   const [toDos, setToDos] = useState({})
   const [done, setDone] = useState()
+  const ID = useRef(0)
 
   useEffect(() => {
     getState();
@@ -44,13 +45,15 @@ export default function App() {
   const addToDo = async () => {
     if (text === '') {
       return
+    } else {
+      const newToDos = {
+        [Date.now()]: { id: ID.current, text, working, done: false }, ...toDos
+      };
+      setToDos(newToDos);
+      await saveToDos(newToDos);
+      setText("");
+      ID.current += 1
     }
-    const newToDos = {
-      [Date.now()]: { text, working, done: false }, ...toDos
-    };
-    setToDos(newToDos);
-    await saveToDos(newToDos);
-    setText("");
   };
 
   // 리스트를 저장소에 저장하는 함수
