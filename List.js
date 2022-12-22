@@ -1,9 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, TextInput } from 'react-native';
 import { theme } from './colors';
 import { Feather } from '@expo/vector-icons';
+import Edit from './Edit';
 
-const List = ({ toDos, working, saveToDos, setToDos, done, setDone, doneToDo }) => {
+const List = ({ toDos, state, saveToDos, working, setToDos, doneToDo, text, setText }) => {
+
+    const [newText, setNewText] = useState()
+
+    const [isEdit, setIsEdit] = useState(false)
+
+    const editList = async () => {
+        const newToDos = { ...toDos }
+        saveToDos(newToDos)
+        setIsEdit(false)
+    }
+
+    const onChangeText = (e) => {
+        setNewText(e)
+    }
 
     const deleteToDo = async (key) => {
         Alert.alert("Delete To Do",
@@ -23,37 +38,72 @@ const List = ({ toDos, working, saveToDos, setToDos, done, setDone, doneToDo }) 
             ]);
     }
 
-    console.log(toDos)
-    const editToDo = async (key) => {
-        const target = toDos[key]
+    const toggleEdit = (key) => {
+        setIsEdit((prev => !prev))
+        setNewText(toDos[key].text)
+        console.log(toDos.id)
     }
 
     return (
-        Object.keys(toDos).map(key =>
-            toDos[key].working === working
-                ?
+        state ? (
+            Object.keys(toDos).map(key =>
+                toDos[key].working === working &&
                 <View style={styles.toDo} key={key}>
-                    <Text style={{ ...styles.toDoText, textDecorationLine: toDos[key].done ? 'line-through' : 'none' }}>{toDos[key].text}</Text>
-                    <View style={styles.toDoBtns}>
-                        <TouchableOpacity style={styles.toDoBtn} onPress={() => doneToDo(key)}>
-                            <Text>
-                                <Feather name="check" size={24} color={theme.grey} />
+                    {isEdit ?
+                        <Edit toDo={toDos[key]} saveToDos={saveToDos} setIsEdit={setIsEdit} toDos={toDos} />
+                        :
+                        <>
+                            <Text style={{ ...styles.toDoText, textDecorationLine: toDos[key].done ? 'line-through' : 'none' }}>
+                                {toDos[key].text}
                             </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.toDoBtn} onPress={() => deleteToDo(key)}>
-                            <Text>
-                                <Feather name="edit" size={24} color={theme.grey} />
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.toDoBtn} onPress={() => deleteToDo(key)}>
-                            <Text>
-                                <Feather name="trash" size={24} color={theme.grey} />
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
+                            <View style={styles.toDoBtns}>
+                                <TouchableOpacity style={styles.toDoBtn} onPress={() => doneToDo(key)}>
+                                    <Text>
+                                        <Feather name="check" size={24} color={theme.grey} />
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.toDoBtn} onPress={() => toggleEdit(key)}>
+                                    <Text>
+                                        <Feather name="edit" size={24} color={theme.grey} />
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.toDoBtn} onPress={() => deleteToDo(key)}>
+                                    <Text>
+                                        <Feather name="trash" size={24} color={theme.grey} />
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </>
+                    }
                 </View>
-                :
-                null)
+            )
+
+        )
+            :
+            Object.keys(toDos).map(key =>
+                toDos[key].working === false && (
+                    <View style={styles.toDo} key={key}>
+                        <Text style={{ ...styles.toDoText, textDecorationLine: toDos[key].done ? 'line-through' : 'none' }}>{toDos[key].text}</Text>
+                        <View style={styles.toDoBtns}>
+                            <TouchableOpacity style={styles.toDoBtn} onPress={() => doneToDo(key)}>
+                                <Text>
+                                    <Feather name="check" size={24} color={theme.grey} />
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.toDoBtn} onPress={() => toggleEdit(key)}>
+                                <Text>
+                                    <Feather name="edit" size={24} color={theme.grey} />
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.toDoBtn} onPress={() => deleteToDo(key)}>
+                                <Text>
+                                    <Feather name="trash" size={24} color={theme.grey} />
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )
+            )
     )
 }
 const styles = StyleSheet.create({
@@ -78,7 +128,15 @@ const styles = StyleSheet.create({
     },
     toDoBtn: {
         marginHorizontal: 5
-    }
+    },
+    input: {
+        backgroundColor: 'white',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderRadius: 30,
+        marginVertical: 20,
+        fontSize: 15,
+    },
 })
 
 
