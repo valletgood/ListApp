@@ -42,6 +42,10 @@ export default function App() {
     }
   }
 
+  const clearText = () => {
+    setText()
+  }
+
   // 리스트를 추가하는 함수
   const addToDo = async () => {
     if (text === '') {
@@ -103,8 +107,7 @@ export default function App() {
         onChangeText={onChangeText}
         onSubmitEditing={addToDo}
         returnKeyType='done'
-        value={text}
-      />
+        value={text} />
       <StatusBar style="light" />
       <ScrollView>
         <List toDos={toDos} state={state} working={working} saveToDos={saveToDos} setToDos={setToDos} text={text} setText={setText} />
