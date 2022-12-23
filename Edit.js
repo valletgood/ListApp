@@ -61,7 +61,7 @@ const Edit = ({ toDo, toDos, saveToDos, setIsEdit, setModal, modal, before }) =>
                     </View>
                 </View>
             </Modal>
-            <Text style={styles.toDoText}>수정중...</Text>
+            <Text style={{ color: 'white', fontSize: 15, fontWeight: '500', }}>수정중...</Text>
         </View>
     )
 }

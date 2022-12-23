@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Platform } from 'react-native';
 import { theme } from './colors';
 import { Feather } from '@expo/vector-icons';
 import Edit from './Edit';
@@ -18,21 +18,31 @@ const List = ({ toDos, state, saveToDos, working, setToDos }) => {
 
     const [editItem, setEditItem] = useState();
     const deleteToDo = async (key) => {
-        Alert.alert("리스트 삭제",
-            "정말 삭제하시겠습니까?",
-            [
-                {
-                    text: '삭제',
-                    style: 'destructive',
-                    onPress: () => {
-                        const newToDos = { ...toDos }
-                        delete newToDos[key]
-                        setToDos(newToDos);
-                        saveToDos(newToDos);
-                    }
-                },
-                { text: "취소" },
-            ]);
+        if (Platform.OS === 'web') {
+            const ok = confirm('정말 삭제하시겠습니까?')
+            if (ok) {
+                const newToDos = { ...toDos }
+                delete newToDos[key]
+                setToDos(newToDos);
+                saveToDos(newToDos);
+            }
+        } else {
+            Alert.alert("리스트 삭제",
+                "정말 삭제하시겠습니까?",
+                [
+                    {
+                        text: '삭제',
+                        style: 'destructive',
+                        onPress: () => {
+                            const newToDos = { ...toDos }
+                            delete newToDos[key]
+                            setToDos(newToDos);
+                            saveToDos(newToDos);
+                        }
+                    },
+                    { text: "취소" },
+                ]);
+        }
     }
 
     const toggleEdit = (key) => {
@@ -74,7 +84,7 @@ const List = ({ toDos, state, saveToDos, working, setToDos }) => {
                                         }
                                     </Text>
                                 </TouchableOpacity>
-                                <Text style={{ ...styles.toDoText, textDecorationLine: toDos[key].done === true ? 'line-through' : 'none' }}>
+                                <Text style={{ color: 'white', fontSize: 15, fontWeight: '500', textDecorationLine: toDos[key].done === true ? 'line-through' : 'none' }}>
                                     {toDos[key].text}
                                 </Text>
                                 <View style={styles.toDoBtns}>
@@ -113,7 +123,7 @@ const List = ({ toDos, state, saveToDos, working, setToDos }) => {
                                         }
                                     </Text>
                                 </TouchableOpacity>
-                                <Text style={{ ...styles.toDoText, textDecorationLine: toDos[key].done ? 'line-through' : 'none' }}>{toDos[key].text}</Text>
+                                <Text style={{ color: 'white', fontSize: 15, fontWeight: '500', textDecorationLine: toDos[key].done ? 'line-through' : 'none' }}>{toDos[key].text}</Text>
                                 <View style={styles.toDoBtns}>
                                     <TouchableOpacity style={styles.toDoBtn} onPress={() => toggleEdit(key)}>
                                         <Text>

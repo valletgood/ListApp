@@ -96,10 +96,10 @@ export default function App() {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={work}>
-          <Text style={{ ...styles.btnText, color: state ? 'white' : theme.grey }}>Work</Text>
+          <Text style={{ fontSize: 45, fontWeight: '600', color: state ? 'white' : theme.grey }}>Work</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={travel}>
-          <Text style={{ ...styles.btnText, color: !state ? 'white' : theme.grey }}>Travel</Text>
+          <Text style={{ fontSize: 45, fontWeight: '600', color: !state ? 'white' : theme.grey }}>Travel</Text>
         </TouchableOpacity>
       </View>
       <TextInput style={styles.input}
@@ -128,8 +128,7 @@ const styles = StyleSheet.create({
     marginTop: 100,
   },
   btnText: {
-    fontSize: 45,
-    fontWeight: '600',
+
   },
   input: {
     backgroundColor: 'white',
