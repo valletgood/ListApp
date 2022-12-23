@@ -7,6 +7,9 @@ import { Fontisto } from '@expo/vector-icons';
 
 const List = ({ toDos, state, saveToDos, working, setToDos }) => {
 
+    // 모달
+    const [modal, setModal] = useState(false);
+
     const [done, setDone] = useState()
 
     const [newText, setNewText] = useState()
@@ -36,6 +39,7 @@ const List = ({ toDos, state, saveToDos, working, setToDos }) => {
         setIsEdit((prev => !prev))
         setNewText(toDos[key].text)
         setEditItem(key)
+        setModal((prev => !prev))
     }
 
     const doneToDo = async (key) => {
@@ -50,11 +54,14 @@ const List = ({ toDos, state, saveToDos, working, setToDos }) => {
         state ? (
             Object.keys(toDos).map(key =>
                 toDos[key].working === working && (
-                    isEdit && key === editItem ? (
-                        <View style={styles.editItem} key={key}>
-                            <Edit id={key} toDo={toDos[key]} saveToDos={saveToDos} setIsEdit={setIsEdit} toDos={toDos} />
-                        </View>
-                    )
+                    isEdit &&
+                        key === editItem ?
+                        (
+                            <View style={styles.editItem} key={key}>
+                                <Edit id={key} toDo={toDos[key]} saveToDos={saveToDos} setIsEdit={setIsEdit} toDos={toDos} setModal={setModal} modal={modal}
+                                    before={newText} />
+                            </View>
+                        )
                         :
                         (
                             <View style={styles.toDo} key={key}>
@@ -91,7 +98,7 @@ const List = ({ toDos, state, saveToDos, working, setToDos }) => {
                 toDos[key].working === false && (
                     isEdit && key === editItem ? (
                         <View style={styles.editItem} key={key}>
-                            <Edit id={key} toDo={toDos[key]} saveToDos={saveToDos} setIsEdit={setIsEdit} toDos={toDos} />
+                            <Edit toDo={toDos[key]} saveToDos={saveToDos} setIsEdit={setIsEdit} toDos={toDos} />
                         </View>
                     )
                         :
@@ -108,7 +115,6 @@ const List = ({ toDos, state, saveToDos, working, setToDos }) => {
                                 </TouchableOpacity>
                                 <Text style={{ ...styles.toDoText, textDecorationLine: toDos[key].done ? 'line-through' : 'none' }}>{toDos[key].text}</Text>
                                 <View style={styles.toDoBtns}>
-
                                     <TouchableOpacity style={styles.toDoBtn} onPress={() => toggleEdit(key)}>
                                         <Text>
                                             <Feather name="edit" size={24} color={theme.grey} />
@@ -136,12 +142,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        overflow: 'hidden'
     },
     toDoText: {
         color: 'white',
         fontSize: 15,
         fontWeight: '500',
-        textDecorationLine: 'line-through'
     },
     toDoBtns: {
         flexDirection: 'row',

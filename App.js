@@ -37,6 +37,9 @@ export default function App() {
   // 텍스트 입력값을 받아오는 함수
   const onChangeText = (e) => {
     setText(e)
+    if (e.length > 20) {
+      Alert.alert('입력 가능한 글자 수를 초과하였습니다!')
+    }
   }
 
   // 리스트를 추가하는 함수
@@ -66,9 +69,10 @@ export default function App() {
   // 리스트를 불러오는 함수
   const loadToDos = async () => {
     const s = await AsyncStorage.getItem(STORAGE_KEY)
-    setToDos(JSON.parse(s))
+    if (s) {
+      setToDos(JSON.parse(s))
+    }
   }
-
   // 마지막 터치를 저장하는 함수
   const saveState = async (state) => {
     await AsyncStorage.setItem(STATE_KEY, JSON.stringify(state))
@@ -95,7 +99,7 @@ export default function App() {
         </TouchableOpacity>
       </View>
       <TextInput style={styles.input}
-        placeholder={state ? 'Add To Do' : "Where do you want to go?"}
+        placeholder={state ? '오늘의 할 일은 무엇인가요?' : "어디를 여행하고 싶으신가요?"}
         onChangeText={onChangeText}
         onSubmitEditing={addToDo}
         returnKeyType='done'
