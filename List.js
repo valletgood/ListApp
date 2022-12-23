@@ -18,12 +18,11 @@ const List = ({ toDos, state, saveToDos, working, setToDos }) => {
 
     const [editItem, setEditItem] = useState();
     const deleteToDo = async (key) => {
-        Alert.alert("Delete To Do",
-            "Are you Sure?",
+        Alert.alert("리스트 삭제",
+            "정말 삭제하시겠습니까?",
             [
-                { text: "Cancel" },
                 {
-                    text: 'Delete',
+                    text: '삭제',
                     style: 'destructive',
                     onPress: () => {
                         const newToDos = { ...toDos }
@@ -31,7 +30,8 @@ const List = ({ toDos, state, saveToDos, working, setToDos }) => {
                         setToDos(newToDos);
                         saveToDos(newToDos);
                     }
-                }
+                },
+                { text: "취소" },
             ]);
     }
 
